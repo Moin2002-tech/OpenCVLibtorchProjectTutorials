@@ -74,4 +74,4 @@ venv.bak/
 # databases/
 
 # External libraries (if they're built locally)
-# external/
+external/libtorch/
