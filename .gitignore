@@ -75,3 +75,4 @@ venv.bak/
 
 # External libraries (if they're built locally)
 external/libtorch/
+databases/fashion-mnist_train.csv
