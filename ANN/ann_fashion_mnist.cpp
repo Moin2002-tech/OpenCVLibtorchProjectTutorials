@@ -102,11 +102,15 @@ public:
 
     ANNImpl(int numFeatures)
     {
-        model =torch::nn::Sequential(torch::nn::Linear(numFeatures,128),
+        model =torch::nn::Sequential(torch::nn::Linear(numFeatures,256),
+            torch::nn::BatchNorm1d(256),
             torch::nn::ReLU(),
-            torch::nn::Linear(128,64),
+            torch::nn::Dropout(0.2),
+            torch::nn::Linear(256,128),
+            torch::nn::BatchNorm1d(128),
             torch::nn::ReLU(),
-            torch::nn::Linear(64,10)
+            torch::nn::Dropout(0.2),
+            torch::nn::Linear(128,10)
             );
 
         register_module("model",model);
@@ -118,22 +122,26 @@ public:
     }
 }; TORCH_MODULE(ANN);
 
-TEST_CASE("ANNFashionMNIST")
-{
-    std::string path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/fmnist_small.csv";
+TEST_CASE("ANNFashionMNIST") {
+    torch::Device device(torch::kCPU);
+    if (torch::cuda::is_available())
+    {
+        device= torch::kCUDA;
+    }
+    std::string path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/fashion-mnist_train.csv";
     csv::CSVFormat format;
     format.delimiter(',').no_header();
    // csv::CSVReader reader(path, format);
 
     //std::vector<csv::CSVRow> rows(reader.begin(), reader.end());
-    
+
     // Create a 4x4 grid to display first 16 images
     const int grid_size = 4;
     const int original_img_size = 28;  // MNIST images are 28x28
     const int display_img_size = 100;  // Scale up for better visibility
     const int spacing = 15;   // Space between images
     const int canvas_size = grid_size * display_img_size + (grid_size - 1) * spacing;
-    
+
     // Create a white canvas
     cv::Mat canvas = cv::Mat::zeros(canvas_size, canvas_size, CV_8UC1);
     canvas.setTo(255);  // White background
@@ -143,10 +151,10 @@ TEST_CASE("ANNFashionMNIST")
     for (int i = 0; i < 16 && i < rows.size(); ++i)
         {
         const auto& row = rows[i];
-        
+
         // Extract label (first column)
         int label = row["label"].get<int>();
-        
+
         // Extract pixel values and reshape to 28x28
         cv::Mat img = cv::Mat::zeros(original_img_size, original_img_size, CV_8UC1);
         for (int j = 0; j < 784; ++j) {
@@ -154,31 +162,31 @@ TEST_CASE("ANNFashionMNIST")
             int pixel_value = row[col_name].get<int>();
             img.at<uchar>(j / original_img_size, j % original_img_size) = static_cast<uchar>(pixel_value);
         }
-        
+
         // Resize image for better visibility
         cv::Mat resized_img;
         cv::resize(img, resized_img, cv::Size(display_img_size, display_img_size), 0, 0, cv::INTER_NEAREST);
-        
+
         // Calculate position in the grid
         int row_pos = i / grid_size;
         int col_pos = i % grid_size;
         int x = col_pos * (display_img_size + spacing);
         int y = row_pos * (display_img_size + spacing);
-        
+
         // Copy resized image to canvas
         cv::Rect roi(x, y, display_img_size, display_img_size);
         resized_img.copyTo(canvas(roi));
-        
+
         // Add label text above the image
         std::string label_text = "Label: " + std::to_string(label);
-        cv::putText(canvas, label_text, 
-                   cv::Point(x + 5, y - 5), 
-                   cv::FONT_HERSHEY_SIMPLEX, 
-                   0.4, 
+        cv::putText(canvas, label_text,
+                   cv::Point(x + 5, y - 5),
+                   cv::FONT_HERSHEY_SIMPLEX,
+                   0.4,
                    cv::Scalar(0),  // Black text
                    1);
     }
-    
+
     // Display the grid
     cv::imshow("First 16 Images - Fashion MNIST", canvas);
     cv::waitKey(0);  // Wait for key press
@@ -190,7 +198,7 @@ TEST_CASE("ANNFashionMNIST")
     auto csvData = extractData(rows);
     preValidation(csvData);
 
-
+/*
     std::map<std::string,torch::Tensor> headersTensors;
     int rowCount =  csvData.second.size();
 
@@ -239,7 +247,47 @@ TEST_CASE("ANNFashionMNIST")
     }
     auto X = torch::stack(features,1);
     auto Y = headersTensors["label"];
+*/
+    int rowCount = csvData.second.size();
+    int colCount = csvData.first.size();
 
+    // 1. Pre-allocate continuous memory blocks
+    // This stops C++ from re-allocating memory millions of times
+    std::vector<float> all_pixels;
+    all_pixels.reserve(rowCount * (colCount - 1));
+    std::vector<float> all_labels;
+    all_labels.reserve(rowCount);
+
+    std::cout << "Parsing CSV data directly to flat buffers..." << std::endl;
+
+    // 2. Single pass through the data matrix
+    for (int row = 0; row < rowCount; ++row) {
+        for (int col = 0; col < colCount; ++col) {
+            const std::string& cell_value = csvData.second[row][col];
+            float val = 0.0f;
+
+            // Fast parse with a lightweight fallback
+            if (!cell_value.empty()) {
+                try {
+                    val = std::stof(cell_value);
+                } catch (...) {
+                    val = 0.0f; // Handle garbage data safely
+                }
+            }
+
+            // 3. Route labels to one buffer, pixels to the other
+            if (csvData.first[col] == "label") {
+                all_labels.push_back(val);
+            } else {
+                all_pixels.push_back(val);
+            }
+        }
+    }
+
+    // 4. Create Tensors directly from memory in ONE shot
+    // .clone() is required so the tensor owns the memory after the vectors are destroyed
+    auto X = torch::from_blob(all_pixels.data(), {rowCount, colCount - 1}, torch::kFloat32).clone();
+    auto Y = torch::from_blob(all_labels.data(), {rowCount}, torch::kFloat32).clone();
     std::cout << "X shape: " << X.sizes() << std::endl;
     std::cout << "y shape: " << Y.sizes() << std::endl;
 
@@ -271,40 +319,48 @@ TEST_CASE("ANNFashionMNIST")
     std::cout<<"Training set size: "<<*train_dataset.size()<<"\n";
     std::cout<<"Test set size: "<<*test_dataset.size()<<"\n";
 
-    int batchSize = 32;
+    int batchSize = 256;
 
     // 2. Use std::move() to transfer ownership to the DataLoader
     auto train_loader = torch::data::make_data_loader<torch::data::samplers::RandomSampler>(
         std::move(train_dataset),
-        torch::data::DataLoaderOptions().batch_size(batchSize)
+        torch::data::DataLoaderOptions().batch_size(batchSize).workers(4)
     );
 
-    auto test_loader = torch::data::make_data_loader<torch::data::samplers::RandomSampler>(
+    // Use SequentialSampler for test (no shuffling needed)
+    auto test_loader = torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
         std::move(test_dataset),
-        torch::data::DataLoaderOptions().batch_size(batchSize)
+        torch::data::DataLoaderOptions().batch_size(batchSize).workers(4)
     );
 
 
-    int epochs = 100;
-    float learningRate = 0.01;
+    int epochs = 25;
+    float learningRate = 0.003;
 
 
+    torch::manual_seed(42);
     auto model = ANN(X_train.size(1));
-    model->to(torch::kCUDA);
+    model->to(device);
 
     //loss function
     auto criterion = torch::nn::CrossEntropyLoss();
-
-    auto optimizer = torch::optim::SGD(model->parameters(), learningRate);
+    auto weightDecay = 1e-4;
+    auto optimizer = torch::optim::Adam(model->parameters(), torch::optim::AdamOptions(learningRate).weight_decay(weightDecay));
 
     //train loop
     for (int epoch = 0 ; epoch< epochs; ++epoch)
     {
+        // Evaluate every 5 epochs to save time
+        if (epoch % 5 == 0) {
+            model->eval();
+            // Add quick evaluation here if needed
+            model->train();
+        }
         model->train();
         for (auto batch : *train_loader)
         {
-            auto batchFeature = batch.data.to(torch::kCUDA);
-            auto batchLabel   = batch.target.to(torch::kCUDA);
+            auto batchFeature = batch.data.to(device);
+            auto batchLabel   = batch.target.to(device);
 
             optimizer.zero_grad();
             auto yPred = model->forward(batchFeature);
@@ -312,12 +368,11 @@ TEST_CASE("ANNFashionMNIST")
             loss.backward();
             optimizer.step();
 
-            std::cout << "Epoch: " << epoch << ", Loss: " << loss.item<double>() << "\n";
+          //  std::cout << "Epoch: " << epoch << ", Loss: " << loss.item<double>() << "\n";
         }
     }
     //evaluation:
     model->eval();
-    
     int total = 0;
     int correct = 0;
     
@@ -325,8 +380,8 @@ TEST_CASE("ANNFashionMNIST")
     
     for (auto batch : *test_loader)
     {
-        auto batch_features = batch.data.to(torch::kCUDA);
-        auto batch_labels = batch.target.to(torch::kCUDA);
+        auto batch_features = batch.data.to(device);
+        auto batch_labels = batch.target.to(device);
         
         auto outputs = model->forward(batch_features);
         auto predictions = torch::max(outputs, 1);

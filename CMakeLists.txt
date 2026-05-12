@@ -23,6 +23,13 @@ add_executable(LibtorchOpenCVTutorials main.cpp
         TrainingPipeline/TrainingNNModule.cpp
         TrainingPipeline/TrainingNNDataLoader.cpp
         ANN/ann_fashion_mnist.cpp
+        ANNGPUBASED/DataProcessing.hpp
+        ANNGPUBASED/DataProcessing.cpp
+        ANNGPUBASED/CustomDatasets.hpp
+        ANNGPUBASED/CustomDatasets.cpp
+        ANNGPUBASED/CNNImple.hpp
+        ANNGPUBASED/CNNImple.cpp
+        ANNGPUBASED/ANNGPUBASED.cpp
 )
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE)
