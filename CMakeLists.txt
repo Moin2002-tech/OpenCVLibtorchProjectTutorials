@@ -12,24 +12,24 @@ find_package(DataFrame REQUIRED)
 add_executable(LibtorchOpenCVTutorials main.cpp
         external/third_party/doctest.cpp
         external/third_party/doctest.hpp
-        BasicFunctionality/readingImage.cpp
-        BasicFunctionality/BasicOperationOnTensors.cpp
-        autogradsInLibtorch/autogradsincpp.cpp
+        src/BasicFunctionality/readingImage.cpp
+        src/BasicFunctionality/BasicOperationOnTensors.cpp
+        src/autogradsInLibtorch/autogradsincpp.cpp
         external/smartStore/lib/tinyxml2/tinyxml2.cpp
         external/smartStore/src/versionForMigration/MigrationRegistry.cpp
-        ReadingAndWriting/readingCsv.cpp
-        ReadingAndWriting/readingAndWritingPrevalidation.cpp
-        TrainingPipeline/TrainingPipeline.cpp
-        TrainingPipeline/TrainingNNModule.cpp
-        TrainingPipeline/TrainingNNDataLoader.cpp
-        ANN/ann_fashion_mnist.cpp
-        ANNGPUBASED/DataProcessing.hpp
-        ANNGPUBASED/DataProcessing.cpp
-        ANNGPUBASED/CustomDatasets.hpp
-        ANNGPUBASED/CustomDatasets.cpp
-        ANNGPUBASED/CNNImple.hpp
-        ANNGPUBASED/CNNImple.cpp
-        ANNGPUBASED/ANNGPUBASED.cpp
+        src/ReadingAndWriting/readingCsv.cpp
+        src/ReadingAndWriting/readingAndWritingPrevalidation.cpp
+        src/TrainingPipeline/TrainingPipeline.cpp
+        src/TrainingPipeline/TrainingNNModule.cpp
+        src/TrainingPipeline/TrainingNNDataLoader.cpp
+        src/ANN/ann_fashion_mnist.cpp
+        src/ANNGPUBASED/DataProcessing.hpp
+        src/ANNGPUBASED/DataProcessing.cpp
+        src/ANNGPUBASED/CustomDatasets.hpp
+        src/ANNGPUBASED/CustomDatasets.cpp
+        src/ANNGPUBASED/CNNImple.hpp
+        src/ANNGPUBASED/CNNImple.cpp
+        src/ANNGPUBASED/ANNGPUBASED.cpp
 )
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE)
@@ -41,6 +41,7 @@ target_include_directories(LibtorchOpenCVTutorials PRIVATE
         ${PROJECT_SOURCE_DIR}/external/smartStore/src
         ${PROJECT_SOURCE_DIR}/external/smartStore/lib/tinyxml2
         ${PROJECT_SOURCE_DIR}/external/smartStore/lib
+        ${PROJECT_SOURCE_DIR}/external/third_party
 )
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE DataFrame::DataFrame)
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE
