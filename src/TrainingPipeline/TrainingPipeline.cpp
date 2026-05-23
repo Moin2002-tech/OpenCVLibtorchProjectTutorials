@@ -7,7 +7,7 @@
 #include<string>
 #include<vector>
 #include<torch/torch.h>
-#include"../external/third_party/doctest.hpp"
+#include"../../external/third_party/doctest.hpp"
 #include"csv.hpp"
 
 

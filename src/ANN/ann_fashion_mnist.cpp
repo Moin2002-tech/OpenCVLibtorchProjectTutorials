@@ -11,7 +11,7 @@
 #include<opencv2/opencv.hpp>
 #include<opencv2/imgproc.hpp>
 #include<algorithm>
-#include"../external/third_party/doctest.hpp"
+#include"../../external/third_party/doctest.hpp"
 
 template<typename T>
 void print(const T& t)
@@ -122,7 +122,8 @@ public:
     }
 }; TORCH_MODULE(ANN);
 
-TEST_CASE("ANNFashionMNIST") {
+TEST_CASE("ANNFashionMNIST")
+{
     torch::Device device(torch::kCPU);
     if (torch::cuda::is_available())
     {

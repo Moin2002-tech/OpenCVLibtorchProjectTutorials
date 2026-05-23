@@ -8,7 +8,7 @@
 #include<torch/data/dataloader.h>
 #include<torch/data/datasets.h>
 #include<csv.hpp>
-#include"../external/third_party/doctest.hpp"
+#include"../../external/third_party/doctest.hpp"
 
 // Corrected inheritance line
 class CustomDatasets : public torch::data::datasets::Dataset<CustomDatasets>

@@ -17,7 +17,7 @@
     It is literally just the Power Rule and Chain Rule from 11th/12th grade, executed across thousands of nodes in parallel.
  */
 #include<torch/torch.h>
-#include"../external/third_party/doctest.hpp"
+#include"../../external/third_party/doctest.hpp"
 using std::cout;
 
 torch::Tensor binaryCrossEntropyLoss(torch::Tensor &pridiction,torch::Tensor &target)

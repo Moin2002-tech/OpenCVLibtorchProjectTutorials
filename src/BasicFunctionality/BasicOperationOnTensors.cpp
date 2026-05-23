@@ -4,7 +4,7 @@
 
 #include<iostream>
 #include<torch/torch.h>
-#include"../external/third_party/doctest.hpp"
+#include"../../external/third_party/doctest.hpp"
 using std::cout;
 
 

@@ -1,7 +1,7 @@
 //
 // Created by moinshaikh on 5/2/26.
 //
-#include"../external/third_party/doctest.hpp"
+#include"../../external/third_party/doctest.hpp"
 
 #include"CNNImple.hpp"
 #include"CustomDatasets.hpp"
@@ -44,7 +44,7 @@ TEST_CASE("ANNGPUBASED")
             std::cout<<"splitting completed successfully"<<std::endl;
 
     torch::manual_seed(42);
-    torch::Device device = torch::kCUDA;
+    torch::Device device = torch::kCPU;
 
     auto train_dataset = CustomDatasets(datasets.X_train, datasets.Y_train).map(torch::data::transforms::Stack<>());
     auto test_dataset  = CustomDatasets(datasets.X_test, datasets.Y_test).map(torch::data::transforms::Stack<>());

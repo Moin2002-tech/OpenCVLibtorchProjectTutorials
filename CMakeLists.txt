@@ -30,6 +30,8 @@ add_executable(LibtorchOpenCVTutorials main.cpp
         src/ANNGPUBASED/CNNImple.hpp
         src/ANNGPUBASED/CNNImple.cpp
         src/ANNGPUBASED/ANNGPUBASED.cpp
+        src/TensorManipulation/tensor.cpp
+        src/LinearRegression/LinearRegression.cpp
 )
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE)
