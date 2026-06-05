@@ -5,18 +5,8 @@
 
 #include <torch/torch.h>
 #include <iostream>
+#include"../../include/Util.h"
 
-template <typename T>
-void print(const std::string& label, const T& t) {
-    std::cout << label << ":\n" << t << "\n\n";
-}
-
-// Overload for torch::Tensor::max(dim) which returns (values, indices) tuple
-void print(const std::string& label, const std::tuple<torch::Tensor, torch::Tensor>& t) {
-    std::cout << label << ":\n";
-    std::cout << "  values:  " << std::get<0>(t) << "\n";
-    std::cout << "  indices: " << std::get<1>(t) << "\n\n";
-}
 
 TEST_CASE("tensorManipulation")
 {

@@ -7,7 +7,7 @@
 #include<doctest.hpp>
 #include<torch/nn.h>
 #include<torch/optim.h>
-
+#include<list>
 
 void println(const std::string& label) {
     std::cout << label << ":\n\n";
@@ -91,13 +91,7 @@ TEST_CASE("TrainingLoopOfLinearRegression")
         }
     }
 }
-// Equivalent of Python's:
-//   class LinearRegressionModel(nn.Module):
-//       def __init__(self):
-//           super().__init__()
-//           self.linear = nn.Linear(1, 1)
-//       def forward(self, x):
-//           return self.linear(x)
+
 class LinearRegressionModelImpl : public torch::nn::Module
 {
 public:
@@ -131,20 +125,23 @@ TEST_CASE("HighLevelLRmodel") {
     // Training loop
     for (int epoch = 0; epoch < 1000; ++epoch) {
         auto prediction = model->forward(X_train);
-        auto loss = torch::mean(torch::square(prediction - Y_train));
+        auto loss = torch::nn::functional::mse_loss(prediction, Y_train);
 
         optimizer.zero_grad();
         loss.backward();
         optimizer.step();
 
-        if (epoch % 200 == 0) {
-            std::cout << "Epoch " << epoch
-                      << " | Loss: " << loss.item<float>() << "\n";
+        if (epoch % 200 == 0)
+        {
+
+            auto param = model->parameters();
+            auto W = param[0].item();
+            auto b = param[1].item();
+            std::cout<<"epoch: "<< epoch <<" "<< "W : "<< W<<" b : "<< b<< "\n";
         }
     }
-
-    // Predict
-    auto test = torch::tensor({{4.0f}}, torch::kFloat);
-    auto pred = model->forward(test);
-    println("Prediction for x=4", pred);
 }
+
+
+
+

@@ -32,6 +32,10 @@ add_executable(LibtorchOpenCVTutorials main.cpp
         src/ANNGPUBASED/ANNGPUBASED.cpp
         src/TensorManipulation/tensor.cpp
         src/LinearRegression/LinearRegression.cpp
+        src/LinearRegression/minimazingCost.cpp
+        include/Util.h
+        src/LinearRegression/MultiVariableLinearRegression.cpp
+        src/LinearRegression/dataLoader.cpp
 )
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE)
