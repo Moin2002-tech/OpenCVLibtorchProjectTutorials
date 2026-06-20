@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(TORCH_CUDA_ARCH_LIST "7.5")
 set(CAFFE2_USE_CUDNN 9)
 set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/x64-linux/share/opencv4")
+
+
 add_subdirectory(external/csv-parser)
 find_package(OpenCV CONFIG REQUIRED)
 find_package(DataFrame REQUIRED)
@@ -36,6 +38,8 @@ add_executable(LibtorchOpenCVTutorials main.cpp
         include/Util.h
         src/LinearRegression/MultiVariableLinearRegression.cpp
         src/LinearRegression/dataLoader.cpp
+        src/LogisticRegression/LogisticRegression.cpp
+        src/LogisticRegression/LClassificationWithData.cpp
 )
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE)
@@ -44,12 +48,11 @@ target_include_directories(LibtorchOpenCVTutorials PRIVATE
         "${CMAKE_SOURCE_DIR}/external/libtorch/include"
         "${CMAKE_SOURCE_DIR}/external/libtorch/include/torch/csrc/api/include"
         "${OpenCV_INCLUDE_DIRS}"
-        ${PROJECT_SOURCE_DIR}/external/smartStore/src
-        ${PROJECT_SOURCE_DIR}/external/smartStore/lib/tinyxml2
-        ${PROJECT_SOURCE_DIR}/external/smartStore/lib
         ${PROJECT_SOURCE_DIR}/external/third_party
+        ${PROJECT_SOURCE_DIR}/include
+
 )
-target_link_libraries(LibtorchOpenCVTutorials PRIVATE DataFrame::DataFrame)
+
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE
 
         -Wl,--no-as-needed

@@ -10,7 +10,7 @@
 #include<vector>
 #include<string>
 #include<string_view>
-
+/*
 struct datasets {
     torch::Tensor xTrain;
     torch::Tensor yTrain;
@@ -79,7 +79,7 @@ datasets convertIntoTensor(std::string_view path, datasets& data)
     data.yTrain = torch::from_blob(labelsBuffer.data(), {numRows, 1}, torch::kFloat32).clone();
     return data;
 }
-
+*/
 
 class MultiVariateLinearRegressionModelImpl : public torch::nn::Module {
 private:
