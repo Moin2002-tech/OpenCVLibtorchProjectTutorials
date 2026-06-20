@@ -53,10 +53,4 @@ TEST_CASE("LogisticClassificationWithRealData")
         }
 
     }
-
-
-
-
-
-
 }

@@ -114,5 +114,45 @@ TEST_CASE("HighLevelSoftmaxClassification")
             std::cout<<"epoch: " <<epoch <<"\tcost:"<<cost.item<float>()<< " \n";
         }
     }
+}
+
+
+class softMaxClassificationModelImpl : public torch::nn::Module {
+private:
+    torch::nn::Linear linear{nullptr};
+public:
+    softMaxClassificationModelImpl(): linear(register_module("linear",torch::nn::Linear(16,7)))
+    {}
+    torch::Tensor forward(torch::Tensor x)
+    {
+        return linear->forward(x);
+    }
+};
+TORCH_MODULE(softMaxClassificationModel);
+TEST_CASE("softmaxWithData")
+{
+    datasets data;
+    std::string_view path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data-04-zoo.csv";
+    convertIntoTensor(path,data);
+    torch::Tensor xTrain = data.xTrain.to(torch::kFloat32);
+    torch::Tensor yTrain = data.yTrain.squeeze().to(torch::kLong);
+
+    auto model = softMaxClassificationModel();
+    auto optimizer = torch::optim::SGD(model->parameters(),0.1);
+
+    int epochs = 1000;
+    for (int epoch = 0; epoch < epochs; ++epoch) {
+        auto prediction = model->forward(xTrain);
+        auto cost = torch::nn::functional::cross_entropy(prediction,yTrain);
+
+        optimizer.zero_grad();
+        cost.backward();
+        optimizer.step();
+
+        if (epoch % 100 == 0)
+        {
+            std::cout<<"epoch: " <<epoch <<"\tcost:"<<cost.item<float>()<< " \n";
+        }
+    }
 
 }
