@@ -10,7 +10,7 @@ set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/x64-linux/share/opencv4")
 
 add_subdirectory(external/csv-parser)
 find_package(OpenCV CONFIG REQUIRED)
-find_package(DataFrame REQUIRED)
+
 add_executable(LibtorchOpenCVTutorials main.cpp
         external/third_party/doctest.cpp
         external/third_party/doctest.hpp
@@ -40,6 +40,7 @@ add_executable(LibtorchOpenCVTutorials main.cpp
         src/LinearRegression/dataLoader.cpp
         src/LogisticRegression/LogisticRegression.cpp
         src/LogisticRegression/LClassificationWithData.cpp
+        src/softmaxClassification/SoftmaxClassification.cpp
 )
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE)
