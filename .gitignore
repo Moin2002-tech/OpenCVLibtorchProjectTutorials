@@ -75,4 +75,8 @@ venv.bak/
 
 # External libraries (if they're built locally)
 external/libtorch/
+
+# Large data files (keep only CSV samples)
 databases/fashion-mnist_train.csv
+databases/mnist_train.csv
+databases/mnist_data/

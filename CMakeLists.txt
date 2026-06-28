@@ -41,6 +41,7 @@ add_executable(LibtorchOpenCVTutorials main.cpp
         src/LogisticRegression/LogisticRegression.cpp
         src/LogisticRegression/LClassificationWithData.cpp
         src/softmaxClassification/SoftmaxClassification.cpp
+        src/MNISTIntro/dataloading.cpp
 )
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE)
