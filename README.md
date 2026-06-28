@@ -154,6 +154,40 @@ make -j$(nproc)
 
 ---
 
+## MNIST Dataset Download
+
+The MNIST dataset files are **not included in the repository** due to their large size. If the binary files are not already present in `databases/mnist_data/`, download and extract them manually:
+
+```bash
+# From the project root
+mkdir -p databases/mnist_data/raw && cd databases/mnist_data/raw
+
+# Download the 4 files
+wget http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+
+# Extract
+gunzip *.gz
+
+# Move files up one directory (out of raw/)
+mv *.ubyte ..
+cd ..
+rmdir raw
+```
+
+After extraction, your `databases/mnist_data/` folder should contain:
+```
+databases/mnist_data/
+├── train-images-idx3-ubyte
+├── train-labels-idx1-ubyte
+├── t10k-images-idx3-ubyte
+└── t10k-labels-idx1-ubyte
+```
+
+---
+
 ## Key Features
 
 - **Linear Regression** (Single & Multi-variable)
