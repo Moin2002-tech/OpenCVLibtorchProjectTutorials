@@ -1,35 +1,6 @@
 //
 // Created by moinshaikh on 6/28/26.
 //
-// Full C++ equivalent of the MNIST training AND test loop:
-//
-//   for epoch in range(training_epochs):
-//       avg_cost = 0
-//       for X, Y in data_loader:
-//           X = X.view(-1, 28 * 28).to(device)
-//           Y = Y.to(device)
-//           optimizer.zero_grad()
-//           hypothesis = linear(X)
-//           cost = criterion(hypothesis, Y)
-//           cost.backward()
-//           optimizer.step()
-//           avg_cost += cost / total_batch
-//       print('Epoch: %04d, cost = %.9f' % (epoch+1, avg_cost))
-//
-//   with torch.no_grad():
-//       X_test = mnist_test.test_data.view(-1, 28*28).float().to(device)
-//       Y_test = mnist_test.test_labels.to(device)
-//       prediction = linear(X_test)
-//       correct_prediction = torch.argmax(prediction, 1) == Y_test
-//       accuracy = correct_prediction.float().mean()
-//       print('Accuracy:', accuracy.item())
-//
-//       r = random.randint(0, len(mnist_test)-1)
-//       X_single = mnist_test.test_data[r:r+1].view(-1, 28*28).float().to(device)
-//       Y_single = mnist_test.test_labels[r:r+1].to(device)
-//       print('Label:', Y_single.item())
-//       single_prediction = linear(X_single)
-//       print('Prediction:', torch.argmax(single_prediction, 1).item())
 
 #include <doctest.hpp>
 #include <Util.h>
@@ -165,7 +136,7 @@ TEST_CASE("MNIST_training_and_test") {
                             .view({-1, 28 * 28})
                             .to(device);
 
-   
+
         auto Y_single = test_dataset.targets()
                             .slice(/*dim=*/0, /*start=*/r, /*end=*/r + 1)
                             .to(device);
