@@ -187,7 +187,7 @@ databases/mnist_data/
 ```
 
 ---
-
+TODO mnist back propagation
 ## Key Features
 
 - **Linear Regression** (Single & Multi-variable)
