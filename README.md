@@ -167,7 +167,11 @@ wget http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
 wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
 wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
 wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
-
+if the following web not working
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fgnt/mnist/master/train-images-idx3-ubyte.gz" -OutFile "train-images-idx3-ubyte.gz"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fgnt/mnist/master/train-labels-idx1-ubyte.gz" -OutFile "train-labels-idx1-ubyte.gz"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fgnt/mnist/master/t10k-images-idx3-ubyte.gz" -OutFile "t10k-images-idx3-ubyte.gz"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fgnt/mnist/master/t10k-labels-idx1-ubyte.gz" -OutFile "t10k-labels-idx1-ubyte.gz"
 # Extract
 gunzip *.gz
 
