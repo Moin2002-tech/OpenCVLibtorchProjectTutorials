@@ -21,7 +21,7 @@ TEST_CASE("ReadingCSV")
     csv::CSVFormat format;
     format.delimiter(',').no_header();
 
-    csv::CSVReader reader("/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data.csv",format);
+    csv::CSVReader reader(std::string(DATASETS_DIR) + "/data.csv",format);
     std::vector<std::string> headers;
     std::vector<std::vector<std::string>> csvData;
     int count = 0;

@@ -132,7 +132,7 @@ TORCH_MODULE(softMaxClassificationModel);
 TEST_CASE("softmaxWithData")
 {
     datasets data;
-    std::string_view path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data-04-zoo.csv";
+    std::string path = std::string(DATASETS_DIR) + "/data-04-zoo.csv";
     convertIntoTensor(path,data);
     torch::Tensor xTrain = data.xTrain.to(torch::kFloat32);
     torch::Tensor yTrain = data.yTrain.squeeze().to(torch::kLong);

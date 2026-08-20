@@ -24,7 +24,7 @@ TEST_CASE("MNIST_training_and_test") {
     constexpr double  kLearningRate   = 0.1;
 
     const std::string kDataRoot =
-        "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/mnist_data/";
+        std::string(DATASETS_DIR) + "/mnist_data/";
 
     // ================================================================
     // Training dataset & DataLoader

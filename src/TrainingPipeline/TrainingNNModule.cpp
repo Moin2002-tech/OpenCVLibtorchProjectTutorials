@@ -35,7 +35,7 @@ public:
 TORCH_MODULE(NNModel);
 TEST_CASE("TrainingPipelineNNModule")
 {
-    std::string path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data.csv";
+    std::string path = std::string(DATASETS_DIR) + "/data.csv";
     csv::CSVFormat format;
     format.delimiter(',').no_header();
 

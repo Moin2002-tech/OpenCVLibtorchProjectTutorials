@@ -13,7 +13,7 @@ TEST_CASE("ReadingCSV_Optimized")
     csv::CSVFormat format;
     format.delimiter(',').no_header();
 
-    csv::CSVReader reader("/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data.csv", format);
+    csv::CSVReader reader(std::string(DATASETS_DIR) + "/data.csv", format);
 
     // 1. Initial Extraction
     std::vector<csv::CSVRow> rows(reader.begin(), reader.end());

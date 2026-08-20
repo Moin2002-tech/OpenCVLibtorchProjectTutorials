@@ -11,14 +11,14 @@
 #include"../../external/third_party/doctest.hpp"
 
 // Corrected inheritance line
-class CustomDatasets : public torch::data::datasets::Dataset<CustomDatasets>
+class TrainingDataLoaderDataset : public torch::data::datasets::Dataset<TrainingDataLoaderDataset>
 {
 private:
     torch::Tensor features;
     torch::Tensor labels;
 
 public:
-    CustomDatasets(torch::Tensor features, torch::Tensor labels)
+    TrainingDataLoaderDataset(torch::Tensor features, torch::Tensor labels)
         : features(features), labels(labels) {}
 
     // Now this will correctly link with your Dataset definition
@@ -31,13 +31,13 @@ public:
     }
 };
 
-class NNModelImpl : public torch::nn::Module
+class TrainingDataLoaderNNModelImpl : public torch::nn::Module
 {
 public:
     torch::nn::Linear linear{nullptr};
     torch::nn::Sigmoid sigmoid{nullptr};
 
-    NNModelImpl(int features) : linear(torch::nn::Linear(features, 1)), sigmoid(torch::nn::Sigmoid()) {
+    TrainingDataLoaderNNModelImpl(int features) : linear(torch::nn::Linear(features, 1)), sigmoid(torch::nn::Sigmoid()) {
         register_module("linear", linear);
         register_module("sigmoid", sigmoid);
     }
@@ -49,11 +49,11 @@ public:
         return out;
     }
 };
-TORCH_MODULE(NNModel);
+TORCH_MODULE(TrainingDataLoaderNNModel);
 
 TEST_CASE("TrainingNNDataLoader")
 {
-    std::string path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data.csv";
+    std::string path = std::string(DATASETS_DIR) + "/data.csv";
     csv::CSVFormat format;
     format.delimiter(',').no_header();
     csv::CSVReader reader(path, format);
@@ -171,8 +171,8 @@ TEST_CASE("TrainingNNDataLoader")
     auto y_test  = Y.index_select(0, test_indices).unsqueeze(1);
 
     // 1. Map the stack transform right when you create the dataset
-    auto train_dataset = CustomDatasets(X_train, y_train).map(torch::data::transforms::Stack<>());
-    auto test_dataset  = CustomDatasets(X_test, y_test).map(torch::data::transforms::Stack<>());
+    auto train_dataset = TrainingDataLoaderDataset(X_train, y_train).map(torch::data::transforms::Stack<>());
+    auto test_dataset  = TrainingDataLoaderDataset(X_test, y_test).map(torch::data::transforms::Stack<>());
 
     std::cout<<"Training set size: "<<*train_dataset.size()<<"\n";
     std::cout<<"Test set size: "<<*test_dataset.size()<<"\n";
@@ -193,7 +193,7 @@ TEST_CASE("TrainingNNDataLoader")
     float learningRate = 0.01;
     int epochs = 25;
 
-    auto model = NNModel(X_train.size(1));
+    auto model = TrainingDataLoaderNNModel(X_train.size(1));
     auto optimizer = torch::optim::SGD(model->parameters(), learningRate);
     auto lossFunction = torch::nn::BCELoss();
 

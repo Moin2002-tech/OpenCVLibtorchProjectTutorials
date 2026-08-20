@@ -2,12 +2,18 @@ cmake_minimum_required(VERSION 3.20)
 project(LibtorchOpenCVTutorials)
 
 
-set(CMAKE_CXX_STANDARD 20)
-set(TORCH_CUDA_ARCH_LIST "7.5")
-set(CAFFE2_USE_CUDNN 9)
-set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/x64-linux/share/opencv4")
+
+set(CMAKE_CXX_STANDARD 17)
+
+# Configure doctest
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
+set(CMAKE_TOOLCHAIN_FILE "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain")
+set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/x64-windows/share/opencv4")
 
 
+add_definitions(-DDATASETS_DIR="${CMAKE_SOURCE_DIR}/databases")
 add_subdirectory(external/csv-parser)
 find_package(OpenCV CONFIG REQUIRED)
 
@@ -17,8 +23,6 @@ add_executable(LibtorchOpenCVTutorials main.cpp
         src/BasicFunctionality/readingImage.cpp
         src/BasicFunctionality/BasicOperationOnTensors.cpp
         src/autogradsInLibtorch/autogradsincpp.cpp
-        external/smartStore/lib/tinyxml2/tinyxml2.cpp
-        external/smartStore/src/versionForMigration/MigrationRegistry.cpp
         src/ReadingAndWriting/readingCsv.cpp
         src/ReadingAndWriting/readingAndWritingPrevalidation.cpp
         src/TrainingPipeline/TrainingPipeline.cpp
@@ -57,30 +61,14 @@ target_include_directories(LibtorchOpenCVTutorials PRIVATE
 
 target_link_libraries(LibtorchOpenCVTutorials PRIVATE
 
-        -Wl,--no-as-needed
-        -Wl,--whole-archive
-        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/libtorch_cuda.so"
-        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/libtorch_cpu.so"
-        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/libtorch.so"
-        -Wl,--no-whole-archive
+        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/torch.lib"
+        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/torch_cpu.lib"
+        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/c10.lib"
+        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/fmt.lib"
 
-        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/libc10_cuda.so"
-        "${CMAKE_SOURCE_DIR}/external/libtorch/lib/libc10.so"
 
-        # 1. CUDA Runtime (from your toolkit)
-        "/usr/local/cuda/lib64/libcudart.so"
-
-        # 2. CUDA Driver (The one usually missing - found in system libs)
-        "/usr/lib/x86_64-linux-gnu/libcuda.so.1"
-
-        # 3. NVRTC (Compiler library)
-        "/usr/local/cuda/lib64/libnvrtc.so"
         csv
         ${OpenCV_LIBS}
-
-        pthread
-        dl
-        m
 )
 
 
@@ -93,3 +81,18 @@ set_target_properties(LibtorchOpenCVTutorials PROPERTIES
 
 
 
+# Copy required DLLs next to the executable (RPATH does not work on Windows)
+if(WIN32)
+    add_custom_command(TARGET LibtorchOpenCVTutorials POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/torch.dll"
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/torch_cpu.dll"
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/c10.dll"
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/torch_global_deps.dll"
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/uv.dll"
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/shm.dll"
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/libiomp5md.dll"
+            "${CMAKE_SOURCE_DIR}/external/libtorch/lib/libiompstubs5md.dll"
+            "$<TARGET_FILE_DIR:LibtorchOpenCVTutorials>"
+    )
+endif()

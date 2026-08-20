@@ -98,7 +98,7 @@ TORCH_MODULE(MultiVariateLinearRegressionModel);
 TEST_CASE("dataloaderFromcsvFile")
 {
    datasets data;
-    convertIntoTensor("/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data-01-test-score.csv", data);
+    convertIntoTensor(std::string(DATASETS_DIR) + "/data-01-test-score.csv", data);
     torch::Tensor xTrain = data.xTrain;
     torch::Tensor yTrain = data.yTrain;
 

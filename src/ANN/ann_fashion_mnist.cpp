@@ -70,13 +70,13 @@ void preValidation(std::pair<std::vector<std::string>,std::vector<std::vector<st
         }
 }
 
-class CustomDatasets: public torch::data::Dataset<CustomDatasets>
+class FashionMNISTDataset: public torch::data::Dataset<FashionMNISTDataset>
 {
 private:
     torch::Tensor features;
     torch::Tensor labels;
 public:
-    CustomDatasets(torch::Tensor features, torch::Tensor labels) : features(features), labels(labels)
+    FashionMNISTDataset(torch::Tensor features, torch::Tensor labels) : features(features), labels(labels)
     {
 
     }
@@ -129,7 +129,7 @@ TEST_CASE("ANNFashionMNIST")
     {
         device= torch::kCUDA;
     }
-    std::string path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/fashion-mnist_train.csv";
+    std::string path = std::string(DATASETS_DIR) + "/fmnist_small.csv";
     csv::CSVFormat format;
     format.delimiter(',').no_header();
    // csv::CSVReader reader(path, format);
@@ -314,8 +314,8 @@ TEST_CASE("ANNFashionMNIST")
     X_train = X_train/255.0;
     X_test = X_test/255.0;
     // 1. Map the stack transform right when you create the dataset
-    auto train_dataset = CustomDatasets(X_train, y_train).map(torch::data::transforms::Stack<>());
-    auto test_dataset  = CustomDatasets(X_test, y_test).map(torch::data::transforms::Stack<>());
+    auto train_dataset = FashionMNISTDataset(X_train, y_train).map(torch::data::transforms::Stack<>());
+    auto test_dataset  = FashionMNISTDataset(X_test, y_test).map(torch::data::transforms::Stack<>());
 
     std::cout<<"Training set size: "<<*train_dataset.size()<<"\n";
     std::cout<<"Test set size: "<<*test_dataset.size()<<"\n";

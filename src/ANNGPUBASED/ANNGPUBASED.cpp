@@ -15,7 +15,7 @@ TEST_CASE("ANNGPUBASED")
             csv::CSVFormat format;
             format.delimiter(',');
             std::cout << "Creating DataProcessor..." << std::endl;
-            DataProcessor process("/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/fashion-mnist_train.csv",format);
+            DataProcessor process( std::string(DATASETS_DIR) + "/fmnist_small.csv",format);
             std::cout << "DataProcessor created successfully" << std::endl;
             
             std::cout << "Calling extractCSVData..." << std::endl;

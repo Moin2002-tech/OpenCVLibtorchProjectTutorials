@@ -26,7 +26,7 @@ TORCH_MODULE(BinaryClassification);
 
 TEST_CASE("LogisticClassificationWithRealData")
 {
-    std::string_view path = "/home/moinshaikh/CLionProjects/LibtorchOpenCVTutorials/databases/data-03-diabetes.csv"  ;
+    std::string path = std::string(DATASETS_DIR) + "/data-03-diabetes.csv";
     datasets data;
     convertIntoTensor(path, data);
     torch::Tensor xTrain = data.xTrain.to(torch::kFloat32);

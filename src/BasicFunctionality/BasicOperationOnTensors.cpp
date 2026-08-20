@@ -83,7 +83,7 @@ Because you are working in C++, you have to be careful with lifetimes. If you cr
 
 TEST_CASE("BasicOperationOnTensors")
 {
-    torch::Device device = torch::kCUDA;
+    torch::Device device = torch::kCPU;
     //empty tensors.
     //generate garbage value only use when buffer or make it overwrite by data
     torch::Tensor tensor = torch::empty({2,3});
@@ -109,7 +109,7 @@ TEST_CASE("BasicOperationOnTensors")
     // 3. Print a tiny 2x3 slice of it.
     std::cout << recycled_empty.slice(0, 0, 2).slice(1, 0, 3) << '\n';
     //using zeros
-    torch::Tensor tensor2 = torch::zeros({2,3},torch::kCUDA);
+    torch::Tensor tensor2 = torch::zeros({2,3},device);
  //   std::cout<<tensor2;
 
     auto tensorOnes = torch::ones({2,3},device);
